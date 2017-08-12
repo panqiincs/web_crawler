@@ -27,6 +27,7 @@ def image_info(url):
     image_data = soup.find('div', attrs={'class': 'col-md-3 col-md-offset-1 data'})
     for div in image_data.find_all('div'):
         image_detail = div.getText()
+        # 'likes', 'downloads', 'views' are more often, but when equals 0 or 1, no 's'
         if 'like' in image_detail:
             image_likes = int(re.sub("\D", "", image_detail))
         if 'download' in image_detail:
@@ -43,7 +44,7 @@ def image_info(url):
 
 
 def download_image(down_url, filename):
-    '''Given a download link, save the image file to disk.'''
+    '''Given a download link, save image to disk.'''
 
     response = requests.get(down_url, stream=True)
     with open(filename, 'wb') as out_file:
@@ -55,8 +56,8 @@ def get_filename(info_url, down_url):
     '''Create a filename from image info url and image download url
     e.g, info_url -- http://www.lifeofpix.com/photo/bouquet/
          down_url -- http://www.lifeofpix.com/wp-content/uploads/2017/04/summer-weddings-1.jpg
-    The filename will be images/bouquet.jpg, if such filename already exists, add a number
-    after the prefix "bouquet", increase the number until filename does not exist.
+    Filename will be images/bouquet.jpg, if such filename already exists, add a number after
+    prefix "bouquet", increase the number until filename does not exist.
     '''
 
     prefix = info_url[info_url[0:len(info_url)-1].rfind('/')+1:len(info_url)-1]
@@ -88,7 +89,7 @@ def page_n(url):
                 download_image(url, filename)
                 print('  ', filename, 'saved to disk')
 
-def home_page(url, pages = 10):
+def home_page(url, pages=10):
     '''Get total numbers of pages, process each page in order.'''
 
     headers = {
