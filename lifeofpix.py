@@ -12,17 +12,14 @@ import requests
 from bs4 import BeautifulSoup
 
 HOME_URL = "http://www.lifeofpix.com/"
+headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'}
 
 
 def image_info(url):
     '''Get infomation of the image: download_url, number of likes, downloads and views.'''
 
-    headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'
-            }
     html = requests.get(url, headers=headers).content
     soup = BeautifulSoup(html, 'lxml')
-
     image_url = soup.find('img', attrs={'id': 'pic'})['src']
     image_data = soup.find('div', attrs={'class': 'col-md-3 col-md-offset-1 data'})
     for div in image_data.find_all('div'):
@@ -60,8 +57,8 @@ def get_filename(info_url, down_url):
     prefix "bouquet", increase the number until filename does not exist.
     '''
 
-    prefix = info_url[info_url[0:len(info_url)-1].rfind('/')+1:len(info_url)-1]
-    suffix = down_url[down_url.rfind('.'):]
+    prefix = info_url.split('/')[-2]
+    suffix = down_url.split('.')[-1]
     filename = 'images/' + prefix + suffix
     num = 0
     while os.path.exists(filename):
@@ -73,9 +70,6 @@ def get_filename(info_url, down_url):
 def page_n(url):
     '''Download all images on this page.'''
 
-    headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'
-            }
     html = requests.get(url, headers=headers).content
     soup = BeautifulSoup(html, 'lxml')
     image_info_total = soup.find_all('a', attrs={'class': 'clickarea overlay'})
@@ -89,15 +83,12 @@ def page_n(url):
                 download_image(url, filename)
                 print('  ', filename, 'saved to disk')
 
+
 def home_page(url, pages=10):
     '''Get total numbers of pages, process each page in order.'''
 
-    headers = {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0'
-            }
     html = requests.get(url, headers=headers).content
     soup = BeautifulSoup(html, 'lxml')
-
     pages_total = int(soup.find('div', attrs={'class': 'total'}).getText())
     if pages > pages_total:
         pages = pages_total
