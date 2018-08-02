@@ -3,6 +3,8 @@
 
 """
 爬取lifeofpix网站下载量大于500的图片
+实现了最简单的爬虫功能，代码非常具有代表性
+代码的详细解释请参考我的博文：https://panqiincs.me/2017/08/13/python-crawler-lifeofpix/
 """
 
 import os
